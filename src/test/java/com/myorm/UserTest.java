@@ -58,24 +58,24 @@ public class UserTest {
         
         // 保存用户
         int result = session.save(user);
-        assertEquals(1, result);
+        assertEquals(1, (int)result);
         
         // 查询所有用户
         List<User> allUsers = session.findAll(User.class);
-        assertEquals(1, allUsers.size());
+        assertEquals(1, (int)allUsers.size());
         
         // 根据条件查询用户
         Map<String, Object> conditions = new HashMap<>();
         conditions.put("USERNAME", "张三");
         List<User> users = session.findByCriteria(User.class, conditions);
-        assertEquals(1, users.size());
-        assertEquals("zhangsan@example.com", users.get(0).getEmail());
+        assertEquals(1, (int)users.size());
+        assertEquals("zhangsan@example.com", (String)users.get(0).getEmail());
         
         // 更新用户
         User userToUpdate = users.get(0);
         userToUpdate.setAge(30);
         result = session.update(userToUpdate);
-        assertEquals(1, result);
+        assertEquals(1, (int)result);
         
         // 验证更新结果
         User updatedUser = session.findById(User.class, userToUpdate.getId());
@@ -83,11 +83,11 @@ public class UserTest {
         
         // 删除用户
         result = session.delete(User.class, updatedUser.getId());
-        assertEquals(1, result);
+        assertEquals(1, (int)result);
         
         // 验证删除结果
         List<User> remainingUsers = session.findAll(User.class);
-        assertEquals(0, remainingUsers.size());
+        assertEquals(0, (int)remainingUsers.size());
     }
     
     @Test
@@ -115,7 +115,7 @@ public class UserTest {
         
         // 验证事务提交结果
         List<User> users = session.findAll(User.class);
-        assertEquals(2, users.size());
+        assertEquals(2, (int)users.size());
     }
     
     @Entity(table = "USER")

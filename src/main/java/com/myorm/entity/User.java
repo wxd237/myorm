@@ -1,10 +1,8 @@
 package com.myorm.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
+import com.myorm.annotation.Column;
+import com.myorm.annotation.Entity;
+import com.myorm.annotation.Id;
 
 /**
  * 用户实体类
@@ -13,7 +11,7 @@ import javax.persistence.GenerationType;
 public class User {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(primaryKey = true, autoIncrement = true)
     private Integer id;
     
     @Column(name = "USERNAME")
