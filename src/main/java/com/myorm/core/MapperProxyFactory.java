@@ -2,6 +2,7 @@ package com.myorm.core;
 
 import com.myorm.annotation.*;
 import com.myorm.exception.OrmException;
+import com.myorm.util.ReflectionUtil;
 
 import java.lang.reflect.*;
 import java.util.ArrayList;
@@ -163,8 +164,69 @@ public class MapperProxyFactory {
         }
         
         private Object executeInsert(Method method, Object[] args) {
-            String sql = method.getAnnotation(Insert.class).value();
-            List<Object> params = extractParams(method, args);
+            Insert insertAnnotation = method.getAnnotation(Insert.class);
+            String sql = insertAnnotation.value();
+            List<Object> params = new ArrayList<>();
+            
+            // 如果SQL语句为空，使用entityClass和tableName生成SQL
+            if (sql.isEmpty()) {
+                Class<?> entityClass = insertAnnotation.entityClass();
+                String tableName = insertAnnotation.tableName();
+                
+                if (entityClass == null || tableName.isEmpty()) {
+                    throw new OrmException("Insert注解必须指定value或entityClass和tableName");
+                }
+                
+                // 获取实体对象
+                Object entity = args[0];
+                
+                // 获取所有字段
+                Map<String, Object> fieldMap = ReflectionUtil.entityToMap(entity);
+                
+                // 生成SQL
+                StringBuilder sqlBuilder = new StringBuilder("INSERT INTO ");
+                sqlBuilder.append(tableName).append(" (");
+                
+                // 生成字段列表
+                StringBuilder valuesBuilder = new StringBuilder(" VALUES (");
+                
+                for (Map.Entry<String, Object> entry : fieldMap.entrySet()) {
+                    String fieldName = entry.getKey();
+                    Object value = entry.getValue();
+                    
+                    // 跳过空值
+                    if (value == null) {
+                        continue;
+                    }
+                    
+                    sqlBuilder.append(fieldName).append(",");
+                    valuesBuilder.append("?,");
+                    params.add(value);
+                }
+                
+                // 删除最后一个逗号
+                sqlBuilder.deleteCharAt(sqlBuilder.length() - 1);
+                valuesBuilder.deleteCharAt(valuesBuilder.length() - 1);
+                
+                sqlBuilder.append(")").append(valuesBuilder).append(")");
+                sql = sqlBuilder.toString();
+            } else {
+                // 使用注解中的SQL语句
+                params = extractParams(method, args);
+                int result = session.execute(sql, params);
+                
+                // 处理返回类型
+                Class<?> returnType = method.getReturnType();
+                if (returnType.equals(int.class) || returnType.equals(Integer.class)) {
+                    return result;
+                }
+                
+                if (returnType.equals(boolean.class) || returnType.equals(Boolean.class)) {
+                    return result > 0;
+                }
+                
+                return null;
+            }
             
             int result = session.execute(sql, params);
             

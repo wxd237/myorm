@@ -6,13 +6,23 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * u6807u8bb0u4e00u4e2au63d2u5165u65b9u6cd5
+ * 标记一个插入方法，自动生成SQL语句
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Insert {
     /**
-     * SQLu63d2u5165u8bedu53e5
+     * SQL语句
      */
-    String value();
+    String value() default "";
+
+    /**
+     * 实体类
+     */
+    Class<?> entityClass() default Object.class;
+    
+    /**
+     * 数据库表名
+     */
+    String tableName() default "";
 }

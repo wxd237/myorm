@@ -65,7 +65,7 @@ public class MapperTest {
         assertNotNull("用户不应该为空", user);
         assertEquals("张三", user.getUsername());
         assertEquals("zhangsan@example.com", user.getEmail());
-        assertEquals(25, user.getAge());
+        assertEquals(25, (int)user.getAge());
     }
     
     @Test
@@ -73,7 +73,7 @@ public class MapperTest {
         // u6d4bu8bd5u67e5u8be2u6240u6709u7528u6237
         List<User> users = userMapper.findAll();
         assertNotNull("用户列表不应该为空", users);
-        assertEquals("应该有3个用户", 3, users.size());
+        assertEquals("应该有3个用户", 3, (int)users.size());
     }
     
     @Test
@@ -81,26 +81,26 @@ public class MapperTest {
         // u6d4bu8bd5u6839u636eu5e74u9f84u67e5u8be2
         List<User> users = userMapper.findByAgeGreaterThan(25);
         assertNotNull("用户列表不应该为空", users);
-        assertEquals("应该有2个用户年龄大于25", 2, users.size());
+        assertEquals("应该有2个用户年龄大于25", 2, (int)users.size());
         
         // u68c0u67e5u7b2cu4e00u4e2au7528u6237
         User user1 = users.get(0);
         assertEquals("李四", user1.getUsername());
-        assertEquals(30, user1.getAge());
+        assertEquals(30, (int)user1.getAge());
     }
     
     @Test
     public void testAddUser() {
         // u6d4bu8bd5u6dfbu52a0u7528u6237
         int result = userMapper.addUser("赵六", "zhaoliu@example.com", 40);
-        assertEquals("应该成功插入1行", 1, result);
+        assertEquals("应该成功插入1行", 1, (int)result);
         
         // u9a8cu8bc1u63d2u5165u6210u529f
         User user = userMapper.findByUsername("赵六");
         assertNotNull("新用户不应该为空", user);
         assertEquals("赵六", user.getUsername());
         assertEquals("zhaoliu@example.com", user.getEmail());
-        assertEquals(40, user.getAge());
+        assertEquals(40, (int)user.getAge());
     }
     
     @Test
@@ -118,7 +118,7 @@ public class MapperTest {
     public void testDeleteByUsername() {
         // u6d4bu8bd5u5220u9664u7528u6237
         int result = userMapper.deleteByUsername("王五");
-        assertEquals("应该成功删除1行", 1, result);
+        assertEquals("应该成功删除1行", 1, (int)result);
         
         // u9a8cu8bc1u5220u9664u6210u529f
         User user = userMapper.findByUsername("王五");
@@ -126,13 +126,13 @@ public class MapperTest {
         
         // u9a8cu8bc1u603bu6570
         int count = userMapper.count();
-        assertEquals("应该剩下2个用户", 2, count);
+        assertEquals("应该剩下2个用户", 2, (int)count);
     }
     
     @Test
     public void testCount() {
         // u6d4bu8bd5u8ba1u7b97u7528u6237u6570u91cf
         int count = userMapper.count();
-        assertEquals("应该有3个用户", 3, count);
+        assertEquals("应该有3个用户", 3, (int)count);
     }
 }
